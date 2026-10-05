@@ -8,18 +8,27 @@ export function useTasks(query, status, page, pageSize) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    setLoading(true);
+  const controller = new AbortController();
+  setLoading(true);
+  setError(null);
 
-    fetchTasks({ query, status, page, pageSize })
-      .then((data) => {
-        setTasks(data.items);
-        setTotal(data.total);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err.message);
-      });
-  }, [query, status, page, pageSize]);
+  fetchTasks({ query, status, page, pageSize, signal: controller.signal })
+    .then((data) => {
+      setTasks(data.items);
+      setTotal(data.total);
+    })
+    .catch((err) => {
+      if (err.name === 'AbortError')
+        console.log('[api] request cancelled');
+       return;
+      setError(err.message);
+    })
+    .finally(() => {
+      if (!controller.signal.aborted) setLoading(false);
+    });
+
+  return () => controller.abort();
+}, [query, status, page, pageSize]);
 
   return { tasks, total, loading, error };
 }
