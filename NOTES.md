@@ -10,11 +10,11 @@ I found and fixed five main issues:
 
 What I did not change
 
-I did not rewrite the existing application or make unrelated changes. I kept the patch small and focused on the problems I found during testing.
+I kept the patch focused. I did not change the current in-memory pagination, add search debouncing, or escape % and _ characters used in SQL LIKE searches. These could be improved later, but I did not want to make unrelated changes during the timebox.
 
 Biggest remaining risk
 
-The application may have performance problems when the number of tasks becomes very large. More investigation would be needed to make database searching and pagination more efficient.
+The controller currently loads all matching rows and then slices the list in Java for pagination. This may become slow and use more memory when the number of tasks grows. With more time, I would move pagination to the database using Spring Pageable or database-level LIMIT/OFFSET.
 
 Tools and AI used
 
