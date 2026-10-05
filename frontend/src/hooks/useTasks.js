@@ -18,9 +18,9 @@ export function useTasks(query, status, page, pageSize) {
       setTotal(data.total);
     })
     .catch((err) => {
-      if (err.name === 'AbortError')
+      if (err.name === 'AbortError'){
         console.log('[api] request cancelled');
-       return;
+       return;}
       setError(err.message);
     })
     .finally(() => {
